@@ -1,6 +1,6 @@
-import {assertNonNullish} from "./asserts";
-import http from "node:http";
-import Response from "./Response";
+import http from 'node:http';
+import { assertNonNullish } from './asserts';
+import { Response } from './Response';
 
 enum HttpMethod {
     Get = 'GET',
@@ -51,4 +51,4 @@ class Router {
     }
 }
 
-export default Router;
+export { Router };

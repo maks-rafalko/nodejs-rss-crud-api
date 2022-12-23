@@ -1,9 +1,7 @@
 module.exports = {
     extends: [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/recommended-requiring-type-checking',
-        'plugin:@typescript-eslint/strict',
+        'airbnb-base',
+        'airbnb-typescript/base'
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -12,4 +10,11 @@ module.exports = {
     },
     plugins: ['@typescript-eslint'],
     root: true,
+    rules: {
+        indent: 'off',
+        'max-len': ['error', 120],
+        '@typescript-eslint/indent': ['error', 4],
+        'import/prefer-default-export': 'off',
+        'import/no-default-export': 'error'
+    }
 };

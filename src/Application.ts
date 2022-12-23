@@ -1,8 +1,8 @@
 import { EventEmitter } from 'node:events';
 import http from 'node:http';
 import { assertNonNullish } from './asserts';
-import Router from "./Router";
-import Response from "./Response";
+import { Router } from './Router';
+import { Response } from './Response';
 
 class Application {
     private readonly emitter;
@@ -37,10 +37,10 @@ class Application {
         return http
             .createServer(
                 {
-                    ServerResponse: Response
+                    ServerResponse: Response,
                 },
                 (request, response) => {
-                    const {method, url} = request;
+                    const { method, url } = request;
 
                     assertNonNullish(method, 'Method must not be nullish.');
                     assertNonNullish(url, 'URL must not be nullish.');
@@ -49,11 +49,11 @@ class Application {
 
                     if (!isHandled) {
                         // todo add 404 status code
-                        response.end()
+                        response.end();
                     }
-                }
-            )
+                },
+            );
     }
 }
 
-export default Application;
+export { Application };

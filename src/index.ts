@@ -1,7 +1,9 @@
 import * as dotenv from 'dotenv';
-import {assertNonNullish} from './asserts';
-import Application from './Application';
-import {userRouter} from './userRouter';
+import { assertNonNullish } from './asserts';
+import { Application } from './Application';
+import { userRouter } from './userRouter';
+
+const RADIX = 10;
 
 dotenv.config();
 
@@ -11,4 +13,4 @@ assertNonNullish(process.env['PUBLISHING_PORT'], 'Port must be a number.');
 
 const app = new Application();
 app.addRouter(userRouter);
-app.listen(parseInt(process.env['PUBLISHING_PORT']));
+app.listen(parseInt(process.env['PUBLISHING_PORT'], RADIX));
