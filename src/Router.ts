@@ -1,6 +1,6 @@
-import http from 'node:http';
 import { assertNonNullish } from './asserts';
 import { Response } from './Response';
+import { Request } from './Request';
 
 enum HttpMethod {
     Get = 'GET',
@@ -9,7 +9,7 @@ enum HttpMethod {
     Delete = 'DELETE',
 }
 
-type HandlerFn = (request: http.IncomingMessage, response: Response) => void;
+type HandlerFn = (request: Request, response: Response) => void;
 
 type Endpoint = Record<string, HandlerFn>;
 

@@ -12,7 +12,7 @@ module.exports = {
     root: true,
     rules: {
         indent: 'off',
-        'max-len': ['error', 120],
+        'max-len': ['error', 130],
         '@typescript-eslint/indent': ['error', 4],
         'import/prefer-default-export': 'off',
         'import/no-default-export': 'error'
