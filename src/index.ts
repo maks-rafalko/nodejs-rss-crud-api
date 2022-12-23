@@ -1,23 +1,19 @@
 import * as http from 'node:http';
 import * as dotenv from 'dotenv';
 import { EventEmitter } from 'node:events';
+import { assertNonNullish } from './asserts';
 
 dotenv.config();
 
 const emitter = new EventEmitter();
 
 // todo add dev/prod error handling
-// todo add typescript config
 
 type HandlerFn = (request: http.IncomingMessage, response: http.ServerResponse) => void;
 
-type Endpoint = {
-    [method: string]: HandlerFn
-}
+type Endpoint = Record<string, HandlerFn>;
 
-type Endpoints = {
-    [path: string]: Endpoint;
-}
+type Endpoints = Record<string, Endpoint>;
 
 class Router {
     private readonly endpoints: Endpoints = {};
@@ -27,13 +23,15 @@ class Router {
     }
 
     public request(method: string, path: string, handler: HandlerFn) {
-        if (!this.endpoints.hasOwnProperty(path)) {
+        if (!this.endpoints[path]) {
             this.endpoints[path] = {};
         }
 
-        const endpoint = this.endpoints[path]!;
+        const endpoint = this.endpoints[path];
 
-        if (endpoint.hasOwnProperty(method)) {
+        assertNonNullish(endpoint, 'Endpoint must not be nullish.');
+
+        if (Object.prototype.hasOwnProperty.call(endpoint, method)) {
             throw new Error(`Handler for ${method} ${path} has already been declared`);
         }
 
@@ -56,7 +54,12 @@ http
             'Content-Type': 'application/json',
         });
 
-        const isHandled = emitter.emit(`${request.method}:${request.url}`, request, response);
+        const {method, url} = request;
+
+        assertNonNullish(method, 'Method must not be nullish.');
+        assertNonNullish(url, 'URL must not be nullish.');
+
+        const isHandled = emitter.emit(`${method}:${url}`, request, response);
 
         if (!isHandled) {
             // todo add 404 status code
