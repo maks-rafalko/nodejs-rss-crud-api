@@ -1,20 +1,14 @@
 import { Router } from './Router';
-import { Response } from './Response';
-import { Request } from './Request';
+import { getUsers } from './controller/User/getUsersAction';
+import { createUser } from './controller/User/createUserAction';
+import { deleteUser } from './controller/User/deleteUser';
 
 const userRouter = new Router();
-const users: object[] = [{ name: 'Ivan' }, { name: 'Nick' }];
 
-userRouter.get('/users', (_: Request, response: Response): void => {
-    response.json(users);
-});
+userRouter.get('/api/users', getUsers);
 
-userRouter.post('/users', (request: Request, response: Response): void => {
-    const newUser = request.getJsonBody();
+userRouter.post('/api/users', createUser);
 
-    users.push(newUser);
-
-    response.json(newUser);
-});
+userRouter.delete('/api/users/:id', deleteUser);
 
 export { userRouter };

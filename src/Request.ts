@@ -6,6 +6,8 @@ class Request extends IncomingMessage {
 
     private queryParameters: URLSearchParams | null = null;
 
+    private placeholderValues: Record<string, string> = {};
+
     public getBody(): string | undefined {
         return this.body;
     }
@@ -28,6 +30,14 @@ class Request extends IncomingMessage {
 
     public setQueryParameters(parameters: URLSearchParams) {
         this.queryParameters = parameters;
+    }
+
+    public getPlaceholderValues(): Record<string, string> {
+        return this.placeholderValues;
+    }
+
+    public setPlaceholderValues(values: Record<string, string>): void {
+        this.placeholderValues = values;
     }
 }
 
