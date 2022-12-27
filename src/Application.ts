@@ -48,8 +48,7 @@ class Application {
                                 this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
                             } catch (error) {
                                 if (error instanceof RouteNotMatchedError) {
-                                    response.statusCode = httpConstants.HTTP_STATUS_NOT_FOUND;
-                                    response.end();
+                                    response.json({message: 'Not Found.'}, httpConstants.HTTP_STATUS_NOT_FOUND);
                                 } else {
                                     throw error;
                                 }
