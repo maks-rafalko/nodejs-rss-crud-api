@@ -1,4 +1,4 @@
-import { assertNonNullish } from './asserts';
+import { assertNonNullish } from '../asserts';
 import { Response } from './Response';
 import { Request } from './Request';
 import { pathToRegExp } from './pathToRegex';

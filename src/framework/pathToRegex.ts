@@ -5,7 +5,7 @@ const pathToRegExp = (path: string): string => {
         if (part.startsWith(':')) {
             const groupName = part.slice(1);
 
-            return `(?<${groupName}>\\d+)`;
+            return `(?<${groupName}>.+)`;
         }
         return part;
     });
