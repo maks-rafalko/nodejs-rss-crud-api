@@ -19,7 +19,12 @@ const config = {
             {
                 test: /\.(ts|tsx)$/i,
                 loader: 'ts-loader',
-                exclude: ['/node_modules/'],
+                include: [path.resolve(__dirname, 'src')],
+                exclude: [
+                    '/node_modules/',
+                    '/build/',
+                    '/__tests__/',
+                ],
             },
         ],
     },

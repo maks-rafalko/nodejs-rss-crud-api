@@ -9,6 +9,8 @@ type CreateUserDto = {
     hobbies: string[];
 };
 
+type UpdateUserDto = CreateUserDto;
+
 const validationRules: Record<keyof CreateUserDto, ValidationRule[]> = {
     username: [new IsRequired(), new Type('string')],
     age: [new IsRequired(), new Type('number')],
@@ -20,4 +22,4 @@ const validationRules: Record<keyof CreateUserDto, ValidationRule[]> = {
     ],
 };
 
-export { CreateUserDto, validationRules };
+export { CreateUserDto, UpdateUserDto, validationRules };

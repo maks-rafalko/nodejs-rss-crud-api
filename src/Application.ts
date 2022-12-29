@@ -6,8 +6,10 @@ import { Response } from './framework/Response';
 import { Request } from './framework/Request';
 import { RouteNotMatchedError } from './error/RouteNotMatchedError';
 import { ValidationError } from './error/ValidationError';
-import { BadRequestError } from './error/BadRequestError';
+import { HttpBadRequestError } from './error/HttpBadRequestError';
 import { PropertyValidationError } from './framework/validator/PropertyValidationError';
+import { userRouter } from './userRouter';
+import { HttpMethodNotAllowed } from './error/HttpMethodNotAllowed';
 
 class Application {
     private routers: Router[] = [];
@@ -22,7 +24,7 @@ class Application {
         this.routers.push(router);
     }
 
-    private createServer(baseUrl: string): http.Server {
+    public createServer(baseUrl: string): http.Server {
         return http
             .createServer(
                 {
@@ -59,8 +61,10 @@ class Application {
                                             message: validationError.getMessage(),
                                         })),
                                     }, httpConstants.HTTP_STATUS_BAD_REQUEST);
-                                } else if (error instanceof BadRequestError) {
+                                } else if (error instanceof HttpBadRequestError) {
                                     response.json({ message: error.message }, httpConstants.HTTP_STATUS_BAD_REQUEST);
+                                } else if (error instanceof HttpMethodNotAllowed) {
+                                    response.json({ message: error.message }, httpConstants.HTTP_STATUS_METHOD_NOT_ALLOWED);
                                 } else if (error instanceof SyntaxError) {
                                     response.json({ message: 'Invalid JSON.' }, httpConstants.HTTP_STATUS_BAD_REQUEST);
                                 } else {
@@ -95,4 +99,12 @@ class Application {
     }
 }
 
-export { Application };
+const createApplication = (): Application => {
+    const app = new Application();
+
+    app.addRouter(userRouter);
+
+    return app;
+};
+
+export { createApplication };

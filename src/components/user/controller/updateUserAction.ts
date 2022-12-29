@@ -1,0 +1,30 @@
+import { constants as httpConstants } from 'node:http2';
+import { Request } from '../../../framework/Request';
+import { Response } from '../../../framework/Response';
+import { HandlerFn } from '../../../framework/Router';
+import { userRepository } from '../userRepository';
+import { validateModel } from '../../../framework/validator';
+import { UpdateUserDto, validationRules } from '../userDto';
+import { assertValidUuid } from '../../../asserts';
+
+const updateUser: HandlerFn = (request: Request, response: Response): void => {
+    const { id } = request.getPlaceholderValues();
+
+    assertValidUuid(id);
+
+    const user = userRepository.findById(id);
+
+    if (!user) {
+        response.json({ message: 'User not found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);
+        return;
+    }
+    const updatedUserDto = request.getJsonBody();
+
+    validateModel<UpdateUserDto>(updatedUserDto, validationRules);
+
+    user.updateFromDto(updatedUserDto);
+
+    response.json(user, httpConstants.HTTP_STATUS_OK);
+};
+
+export { updateUser };

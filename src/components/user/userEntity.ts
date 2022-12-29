@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
-import { CreateUserDto } from './createUserDto';
+import { CreateUserDto, UpdateUserDto } from './userDto';
 
 class User {
     private readonly id: string;
 
-    private readonly username: string;
+    private username: string;
 
-    private readonly age: number;
+    private age: number;
 
-    private readonly hobbies: string[];
+    private hobbies: string[];
 
     constructor(username: string, age: number, hobbies: string[]) {
         this.id = uuidv4();
@@ -31,6 +31,12 @@ class User {
 
     public getHobbies(): string[] {
         return this.hobbies;
+    }
+
+    public updateFromDto(dto: UpdateUserDto): void {
+        this.username = dto.username;
+        this.age = dto.age;
+        this.hobbies = dto.hobbies;
     }
 
     public static fromDto(dto: CreateUserDto): User {

@@ -5,7 +5,7 @@ import { HandlerFn } from '../../../framework/Router';
 import { userRepository } from '../userRepository';
 import { validateModel } from '../../../framework/validator';
 import { User } from '../userEntity';
-import { CreateUserDto, validationRules } from '../createUserDto';
+import { CreateUserDto, validationRules } from '../userDto';
 
 const createUser: HandlerFn = (request: Request, response: Response): void => {
     const newUserDto = request.getJsonBody();

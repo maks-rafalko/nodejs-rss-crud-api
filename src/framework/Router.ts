@@ -2,6 +2,7 @@ import { assertNonNullish } from '../asserts';
 import { Response } from './Response';
 import { Request } from './Request';
 import { pathToRegExp } from './pathToRegex';
+import { HttpMethodNotAllowed } from '../error/HttpMethodNotAllowed';
 
 enum HttpMethod {
     Get = 'GET',
@@ -25,24 +26,6 @@ class Router {
         this.endpoints = {};
     }
 
-    public request(method: string, path: string, handler: HandlerFn) {
-        const regExp = pathToRegExp(path);
-
-        if (!this.endpoints[regExp]) {
-            this.endpoints[regExp] = {};
-        }
-
-        const endpoint = this.endpoints[regExp];
-
-        assertNonNullish(endpoint, 'Endpoint must not be nullish.');
-
-        if (Object.prototype.hasOwnProperty.call(endpoint, method)) {
-            throw new Error(`Handler for ${method} ${path} has already been declared`);
-        }
-
-        endpoint[method] = handler;
-    }
-
     public get(path: string, handler: HandlerFn) {
         this.request(HttpMethod.Get, path, handler);
     }
@@ -53,6 +36,10 @@ class Router {
 
     public delete(path: string, handler: HandlerFn) {
         this.request(HttpMethod.Delete, path, handler);
+    }
+
+    public put(path: string, handler: HandlerFn) {
+        this.request(HttpMethod.Put, path, handler);
     }
 
     public getEndpoints(): Endpoints {
@@ -75,6 +62,10 @@ class Router {
             assertNonNullish(endpoint, 'Endpoint must not be nullish.');
 
             const handler = endpoint[method];
+
+            if (!handler) {
+                throw new HttpMethodNotAllowed();
+            }
             assertNonNullish(handler, 'Handler must not be nullish.');
 
             return {
@@ -84,6 +75,24 @@ class Router {
         }
 
         return null;
+    }
+
+    private request(method: string, path: string, handler: HandlerFn) {
+        const regExp = pathToRegExp(path);
+
+        if (!this.endpoints[regExp]) {
+            this.endpoints[regExp] = {};
+        }
+
+        const endpoint = this.endpoints[regExp];
+
+        assertNonNullish(endpoint, 'Endpoint must not be nullish.');
+
+        if (Object.prototype.hasOwnProperty.call(endpoint, method)) {
+            throw new Error(`Handler for ${method} ${path} has already been declared`);
+        }
+
+        endpoint[method] = handler;
     }
 }
 

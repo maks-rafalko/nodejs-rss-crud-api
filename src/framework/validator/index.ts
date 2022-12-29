@@ -27,7 +27,7 @@ const validateProperty = (
 
 function validateModel<TClass extends Record<string, any>>(
     model: Record<string, any>,
-    validationSchema: Record<string, ValidationRule[]>
+    validationSchema: Record<string, ValidationRule[]>,
 ): asserts model is TClass {
     let errors: PropertyValidationError[] = [];
 
