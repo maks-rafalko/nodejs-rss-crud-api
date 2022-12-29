@@ -25,11 +25,14 @@ const validateProperty = (
     return errors;
 };
 
-const validateEntity = (entity: Record<string, any>, validationSchema: Record<string, ValidationRule[]>): void => {
+function validateModel<TClass extends Record<string, any>>(
+    model: Record<string, any>,
+    validationSchema: Record<string, ValidationRule[]>
+): asserts model is TClass {
     let errors: PropertyValidationError[] = [];
 
     for (const [property, propertyValidationRules] of Object.entries(validationSchema)) {
-        const propertyErrors = validateProperty(property, entity[property], propertyValidationRules);
+        const propertyErrors = validateProperty(property, model[property], propertyValidationRules);
 
         if (propertyErrors.length > 0) {
             errors = errors.concat(propertyErrors);
@@ -39,6 +42,6 @@ const validateEntity = (entity: Record<string, any>, validationSchema: Record<st
     if (errors.length > 0) {
         throw new ValidationError(errors);
     }
-};
+}
 
-export { validateEntity, ValidationRule };
+export { validateModel, ValidationRule };

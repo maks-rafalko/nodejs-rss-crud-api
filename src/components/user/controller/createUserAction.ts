@@ -3,14 +3,14 @@ import { Request } from '../../../framework/Request';
 import { Response } from '../../../framework/Response';
 import { HandlerFn } from '../../../framework/Router';
 import { userRepository } from '../userRepository';
-import { validateEntity } from '../../../framework/validator';
+import { validateModel } from '../../../framework/validator';
 import { User } from '../userEntity';
 import { CreateUserDto, validationRules } from '../createUserDto';
 
 const createUser: HandlerFn = (request: Request, response: Response): void => {
-    const newUserDto = request.getJsonBody() as CreateUserDto;
+    const newUserDto = request.getJsonBody();
 
-    validateEntity(newUserDto, validationRules);
+    validateModel<CreateUserDto>(newUserDto, validationRules);
 
     const user = User.fromDto(newUserDto);
     userRepository.create(user);
