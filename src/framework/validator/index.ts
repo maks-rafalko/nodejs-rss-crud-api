@@ -31,6 +31,16 @@ function validateModel<TClass extends Record<string, any>>(
 ): asserts model is TClass {
     let errors: PropertyValidationError[] = [];
 
+    const modelKeys = Object.keys(model);
+    const validationSchemaKeys = Object.keys(validationSchema);
+    const extraKeys = modelKeys.filter((key) => !validationSchemaKeys.includes(key));
+
+    if (extraKeys.length > 0) {
+        throw new ValidationError(
+            [new PropertyValidationError('__root__', `Model has extra keys: ${extraKeys.join(', ')}.`)],
+        );
+    }
+
     for (const [property, propertyValidationRules] of Object.entries(validationSchema)) {
         const propertyErrors = validateProperty(property, model[property], propertyValidationRules);
 

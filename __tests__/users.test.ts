@@ -133,6 +133,29 @@ describe('Users Model', () => {
                 ],
             });
         });
+
+        it('returns 400 when request has extra properties', async () => {
+            const createUserDto = {
+                username: 'Test',
+                age: 1,
+                hobbies: [],
+                extra1: 'extra1',
+                extra2: [],
+                extra3: {},
+            };
+
+            const response = await request.post('/api/users').send(createUserDto);
+
+            expect(response.status).toBe(httpConstants.HTTP_STATUS_BAD_REQUEST);
+            expect(response.body).toEqual({
+                violations: [
+                    {
+                        property: '__root__',
+                        message: 'Model has extra keys: extra1, extra2, extra3.',
+                    },
+                ],
+            });
+        });
     });
 
     describe('GET /users', () => {
