@@ -29,17 +29,9 @@ function validateModel<TClass extends Record<string, any>>(
     model: Record<string, any>,
     validationSchema: Record<string, ValidationRule[]>,
 ): asserts model is TClass {
+    checkModelHasNoExtraKeys(model, validationSchema);
+
     let errors: PropertyValidationError[] = [];
-
-    const modelKeys = Object.keys(model);
-    const validationSchemaKeys = Object.keys(validationSchema);
-    const extraKeys = modelKeys.filter((key) => !validationSchemaKeys.includes(key));
-
-    if (extraKeys.length > 0) {
-        throw new ValidationError(
-            [new PropertyValidationError('__root__', `Model has extra keys: ${extraKeys.join(', ')}.`)],
-        );
-    }
 
     for (const [property, propertyValidationRules] of Object.entries(validationSchema)) {
         const propertyErrors = validateProperty(property, model[property], propertyValidationRules);
@@ -51,6 +43,18 @@ function validateModel<TClass extends Record<string, any>>(
 
     if (errors.length > 0) {
         throw new ValidationError(errors);
+    }
+}
+
+function checkModelHasNoExtraKeys(model: Record<string, any>, validationSchema: Record<string, ValidationRule[]>): void {
+    const modelKeys = Object.keys(model);
+    const validationSchemaKeys = Object.keys(validationSchema);
+    const extraKeys = modelKeys.filter((key) => !validationSchemaKeys.includes(key));
+
+    if (extraKeys.length > 0) {
+        throw new ValidationError(
+            [new PropertyValidationError('__root__', `Model has extra keys: ${extraKeys.join(', ')}.`)],
+        );
     }
 }
 

@@ -47,12 +47,13 @@ class Router {
     }
 
     public matchPath(method: string, path: string): MatchedRouteResult {
+        const pathToMatch = path.replace(/\/$/, '');
         const endpoints = this.getEndpoints();
         const regexMatchesPaths = Object.keys(endpoints);
 
         for (const regexMatchesPath of regexMatchesPaths) {
             const regex = new RegExp(regexMatchesPath);
-            const matches = regex.exec(path);
+            const matches = regex.exec(pathToMatch);
 
             if (!matches) {
                 continue;
@@ -66,7 +67,6 @@ class Router {
             if (!handler) {
                 throw new HttpMethodNotAllowed();
             }
-            assertNonNullish(handler, 'Handler must not be nullish.');
 
             return {
                 handler,

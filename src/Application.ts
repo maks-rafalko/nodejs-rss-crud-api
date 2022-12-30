@@ -1,15 +1,11 @@
 import http from 'node:http';
-import { constants as httpConstants } from 'node:http2';
 import { assertNonNullish } from './asserts';
 import { Router } from './framework/Router';
 import { Response } from './framework/Response';
 import { Request } from './framework/Request';
 import { RouteNotMatchedError } from './error/RouteNotMatchedError';
-import { ValidationError } from './error/ValidationError';
-import { HttpBadRequestError } from './error/HttpBadRequestError';
-import { PropertyValidationError } from './framework/validator/PropertyValidationError';
 import { userRouter } from './userRouter';
-import { HttpMethodNotAllowed } from './error/HttpMethodNotAllowed';
+import { handleException } from './framework/exceptionHandler';
 
 class Application {
     private routers: Router[] = [];
@@ -31,47 +27,22 @@ class Application {
                     IncomingMessage: Request,
                     ServerResponse: Response,
                 },
-                (request: Request, response: Response) => {
-                    const bodyChunks: Uint8Array[] = [];
+                async (request: Request, response: Response) => {
+                    try {
+                        const rawBody = await resolveBody(request);
+                        request.setBody(rawBody);
 
-                    request
-                        .on('data', (chunk: Uint8Array) => {
-                            bodyChunks.push(chunk);
-                        })
-                        .on('end', () => {
-                            try {
-                                const parsedBody = Buffer.concat(bodyChunks).toString();
-                                request.setBody(parsedBody);
+                        const { method, url } = request;
+                        assertNonNullish(method, 'Method must not be nullish.');
+                        assertNonNullish(url, 'URL must not be nullish.');
 
-                                const { method, url } = request;
-                                assertNonNullish(method, 'Method must not be nullish.');
-                                assertNonNullish(url, 'URL must not be nullish.');
+                        const parsedUrl = new URL(url, baseUrl);
+                        request.setQueryParameters(parsedUrl.searchParams);
 
-                                const parsedUrl = new URL(url, baseUrl);
-                                request.setQueryParameters(parsedUrl.searchParams);
-
-                                this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
-                            } catch (error) {
-                                if (error instanceof RouteNotMatchedError) {
-                                    response.json({ message: 'Not Found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);
-                                } else if (error instanceof ValidationError) {
-                                    response.json({
-                                        violations: error.getErrors().map((validationError: PropertyValidationError) => ({
-                                            property: validationError.getProperty(),
-                                            message: validationError.getMessage(),
-                                        })),
-                                    }, httpConstants.HTTP_STATUS_BAD_REQUEST);
-                                } else if (error instanceof HttpBadRequestError) {
-                                    response.json({ message: error.message }, httpConstants.HTTP_STATUS_BAD_REQUEST);
-                                } else if (error instanceof HttpMethodNotAllowed) {
-                                    response.json({ message: error.message }, httpConstants.HTTP_STATUS_METHOD_NOT_ALLOWED);
-                                } else if (error instanceof SyntaxError) {
-                                    response.json({ message: 'Invalid JSON.' }, httpConstants.HTTP_STATUS_BAD_REQUEST);
-                                } else {
-                                    throw error;
-                                }
-                            }
-                        });
+                        this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
+                    } catch (error) {
+                        handleException(error as Error, response);
+                    }
                 },
             );
     }
@@ -97,6 +68,16 @@ class Application {
 
         throw new RouteNotMatchedError();
     }
+}
+
+const resolveBody = async (request: Request): Promise<string> => {
+    const bodyChunks: Uint8Array[] = [];
+
+    for await (const chunk of request) {
+        bodyChunks.push(chunk);
+    }
+
+    return Buffer.concat(bodyChunks).toString();
 }
 
 const createApplication = (): Application => {
