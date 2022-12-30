@@ -2,13 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto, UpdateUserDto } from './userDto';
 
 class User {
-    private readonly id: string;
+    public readonly id: string;
 
-    private username: string;
+    public username: string;
 
-    private age: number;
+    public age: number;
 
-    private hobbies: string[];
+    public hobbies: string[];
 
     constructor(username: string, age: number, hobbies: string[]) {
         this.id = uuidv4();

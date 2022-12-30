@@ -7,12 +7,12 @@ import { validateModel } from '../../../framework/validator';
 import { UpdateUserDto, validationRules } from '../userDto';
 import { assertValidUuid } from '../../../asserts';
 
-const updateUser: HandlerFn = (request: Request, response: Response): void => {
+const updateUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.getPlaceholderValues();
 
     assertValidUuid(id);
 
-    const user = userRepository.findById(id);
+    const user = await userRepository.findById(id);
 
     if (!user) {
         response.json({ message: 'User not found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);

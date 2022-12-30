@@ -7,6 +7,16 @@ import { RouteNotMatchedError } from './error/RouteNotMatchedError';
 import { userRouter } from './userRouter';
 import { handleException } from './framework/exceptionHandler';
 
+const resolveBody = async (request: Request): Promise<string> => {
+    const bodyChunks: Uint8Array[] = [];
+
+    for await (const chunk of request) {
+        bodyChunks.push(chunk);
+    }
+
+    return Buffer.concat(bodyChunks).toString();
+};
+
 class Application {
     private routers: Router[] = [];
 
@@ -39,7 +49,9 @@ class Application {
                         const parsedUrl = new URL(url, baseUrl);
                         request.setQueryParameters(parsedUrl.searchParams);
 
-                        this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
+                        // console.log(`Request received: ${method} ${parsedUrl.pathname}`);
+
+                        await this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
                     } catch (error) {
                         handleException(error as Error, response);
                     }
@@ -47,7 +59,7 @@ class Application {
             );
     }
 
-    private executeMatchedHandler(request: Request, response: Response, method: string, path: string): void {
+    private async executeMatchedHandler(request: Request, response: Response, method: string, path: string): Promise<void> {
         for (const router of this.routers) {
             const matchedUrl = router.matchPath(method, path);
 
@@ -61,23 +73,13 @@ class Application {
                 request.setPlaceholderValues(placeholderValues);
             }
 
-            handler(request, response);
-
+            // @ts-ignore: This is a valid call.
+            await handler(request, response);
             return;
         }
 
         throw new RouteNotMatchedError();
     }
-}
-
-const resolveBody = async (request: Request): Promise<string> => {
-    const bodyChunks: Uint8Array[] = [];
-
-    for await (const chunk of request) {
-        bodyChunks.push(chunk);
-    }
-
-    return Buffer.concat(bodyChunks).toString();
 }
 
 const createApplication = (): Application => {

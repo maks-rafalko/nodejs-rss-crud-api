@@ -33,7 +33,9 @@ describe('Users Model', () => {
             const userWithoutId = omit(response.body, 'id');
 
             expect(userWithoutId).toEqual(createUserDto);
-            expect(userRepository.findAll().length).toEqual(1);
+
+            const allUsers = await userRepository.findAll();
+            expect(allUsers.length).toEqual(1);
         });
 
         it('returns 400 when username is missing', async () => {
@@ -45,7 +47,8 @@ describe('Users Model', () => {
             const response = await request.post('/api/users').send(createUserDto);
 
             expect(response.status).toBe(httpConstants.HTTP_STATUS_BAD_REQUEST);
-            expect(userRepository.findAll().length).toEqual(0);
+            const allUsers = await userRepository.findAll();
+            expect(allUsers.length).toEqual(0);
             expect(response.body).toEqual({
                 violations: [
                     {
@@ -187,8 +190,8 @@ describe('Users Model', () => {
         });
 
         it('returns existing users with leading slash', async () => {
-            userRepository.create(new User('John', 20, ['hiking', 'reading']));
-            userRepository.create(new User('Nick', 13, ['programming']));
+            await userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            await userRepository.create(new User('Nick', 13, ['programming']));
 
             const response = await request.get('/api/users/');
 
@@ -205,7 +208,7 @@ describe('Users Model', () => {
         });
 
         it('returns existing user from the database', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
 
             const response = await request.get(`/api/users/${user.getId()}`);
 
@@ -214,7 +217,7 @@ describe('Users Model', () => {
         });
 
         it('returns existing user from the database with trailing slash', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
 
             const response = await request.get(`/api/users/${user.getId()}/`);
 
@@ -225,7 +228,7 @@ describe('Users Model', () => {
 
     describe('PUT /users/:id', () => {
         it('updates existing user', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
 
             const updateUserDto: UpdateUserDto = {
                 username: 'Nick',
@@ -259,7 +262,7 @@ describe('Users Model', () => {
         });
 
         it('returns 400 when username is missing', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
             const updateUserDto = {
                 age: 20,
                 hobbies: ['hiking', 'reading'],
@@ -279,7 +282,7 @@ describe('Users Model', () => {
         });
 
         it('returns 400 when age is missing', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
             const updateUserDto = {
                 username: 'Test',
                 hobbies: ['hiking', 'reading'],
@@ -299,7 +302,7 @@ describe('Users Model', () => {
         });
 
         it('returns 400 when hobbies is missing', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
             const updateUserDto = {
                 username: 'Test',
                 age: 1,
@@ -319,7 +322,7 @@ describe('Users Model', () => {
         });
 
         it('returns 400 when hobbies contains not all string values', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
             const updateUserDto = {
                 username: 'Test',
                 age: 1,
@@ -340,7 +343,7 @@ describe('Users Model', () => {
         });
 
         it('returns 400 when hobbies is null', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
             const updateUserDto = {
                 username: 'Test',
                 age: 1,
@@ -363,13 +366,15 @@ describe('Users Model', () => {
 
     describe('DELETE /users/:id', () => {
         it('deletes an existing user', async () => {
-            const user = userRepository.create(new User('John', 20, ['hiking', 'reading']));
-            expect(userRepository.findAll().length).toEqual(1);
+            const user = await userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            const allUsers = await userRepository.findAll();
+            expect(allUsers.length).toEqual(1);
 
             const response = await request.delete(`/api/users/${user.getId()}`);
 
             expect(response.status).toBe(httpConstants.HTTP_STATUS_NO_CONTENT);
-            expect(userRepository.findAll().length).toEqual(0);
+            const allUsersAfterChanges = await userRepository.findAll();
+            expect(allUsersAfterChanges.length).toEqual(0);
         });
 
         it('returns 404 when user does not exist', async () => {

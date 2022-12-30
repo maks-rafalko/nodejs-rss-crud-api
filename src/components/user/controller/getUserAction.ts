@@ -5,12 +5,12 @@ import { Response } from '../../../framework/Response';
 import { userRepository } from '../userRepository';
 import { assertValidUuid } from '../../../asserts';
 
-const getUser: HandlerFn = (request: Request, response: Response): void => {
+const getUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.getPlaceholderValues();
 
     assertValidUuid(id);
 
-    const user = userRepository.findById(id);
+    const user = await userRepository.findById(id);
 
     if (!user) {
         response.json({ message: 'User not found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);

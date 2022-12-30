@@ -7,13 +7,13 @@ import { validateModel } from '../../../framework/validator';
 import { User } from '../userEntity';
 import { CreateUserDto, validationRules } from '../userDto';
 
-const createUser: HandlerFn = (request: Request, response: Response): void => {
+const createUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
     const newUserDto = request.getJsonBody();
 
     validateModel<CreateUserDto>(newUserDto, validationRules);
 
     const user = User.fromDto(newUserDto);
-    userRepository.create(user);
+    await userRepository.create(user);
 
     response.json(user, httpConstants.HTTP_STATUS_CREATED);
 };

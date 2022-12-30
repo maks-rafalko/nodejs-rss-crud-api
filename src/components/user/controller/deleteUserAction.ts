@@ -5,17 +5,19 @@ import { Response } from '../../../framework/Response';
 import { userRepository } from '../userRepository';
 import { assertValidUuid } from '../../../asserts';
 
-const deleteUser: HandlerFn = (request: Request, response: Response): void => {
+const deleteUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.getPlaceholderValues();
 
     assertValidUuid(id);
 
-    if (!userRepository.findById(id)) {
+    const user = await userRepository.findById(id);
+
+    if (!user) {
         response.json({ message: 'User not found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);
         return;
     }
 
-    userRepository.delete(id);
+    await userRepository.delete(id);
 
     response.statusCode = httpConstants.HTTP_STATUS_NO_CONTENT;
     response.end();

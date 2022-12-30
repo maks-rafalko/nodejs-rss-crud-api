@@ -3,8 +3,8 @@ import { Response } from '../../../framework/Response';
 import { HandlerFn } from '../../../framework/Router';
 import { userRepository } from '../userRepository';
 
-const getUsers: HandlerFn = (_: Request, response: Response): void => {
-    const users = userRepository.findAll();
+const getUsers: HandlerFn = async (_: Request, response: Response): Promise<void> => {
+    const users = await userRepository.findAll();
 
     response.json(users);
 };

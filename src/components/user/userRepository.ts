@@ -1,28 +1,34 @@
 import { User } from './userEntity';
+import { IDataStorage } from '../../framework/IDataStorage';
+import { InMemoryDatabase } from '../../framework/InMemoryDatabase';
 
 class UserRepository {
-    private users: User[] = [];
+    private dataStorage: IDataStorage<User>;
 
-    public findAll(): User[] {
-        return this.users;
+    constructor() {
+        this.dataStorage = new InMemoryDatabase<User>();
     }
 
-    public findById(id: string): User | undefined {
-        return this.users.find((user) => user.getId() === id);
+    public async findAll(): Promise<User[]> {
+        return this.dataStorage.getAll();
     }
 
-    public create(user: User): User {
-        this.users.push(user);
+    public async findById(id: string): Promise<User | undefined> {
+        return this.dataStorage.get('id', id);
+    }
+
+    public async create(user: User): Promise<User> {
+        await this.dataStorage.add(user);
 
         return user;
     }
 
-    public delete(id: string): void {
-        this.users = this.users.filter((user) => user.getId() !== id);
+    public async delete(id: string): Promise<void> {
+        await this.dataStorage.remove('id', id);
     }
 
-    public clearAll(): void {
-        this.users = [];
+    public async clearAll(): Promise<void> {
+        await this.dataStorage.clear();
     }
 }
 
