@@ -20,7 +20,6 @@ const createApplication = (): Application => {
 const createMultiNodeApplication = (startPort: number): void => {
     const cpuCount = cpus().length;
 
-    // todo gitignore .env, add .env.example
     // todo move users var out from repository
     // todo magic strings - get rid of them
     // todo add test for syntax error

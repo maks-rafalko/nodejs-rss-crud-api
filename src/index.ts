@@ -14,8 +14,6 @@ assertNonNullish(process.env['PUBLISHING_PORT'], 'Port must be a number.');
 
 const port = parseIntRadix10(process.env['PUBLISHING_PORT']);
 
-// todo add dev/prod error handling
-
 if (isMultiNode) {
     createMultiNodeApplication(port);
 } else {
