@@ -10,8 +10,8 @@ class User {
 
     public hobbies: string[];
 
-    constructor(username: string, age: number, hobbies: string[]) {
-        this.id = uuidv4();
+    constructor(username: string, age: number, hobbies: string[], id: string = uuidv4()) {
+        this.id = id;
         this.username = username;
         this.age = age;
         this.hobbies = hobbies;
@@ -41,6 +41,10 @@ class User {
 
     public static fromDto(dto: CreateUserDto): User {
         return new User(dto.username, dto.age, dto.hobbies);
+    }
+
+    public static fromRawObject(rawObject: Record<keyof User, any>): User {
+        return new User(rawObject.username, rawObject.age, rawObject.hobbies, rawObject.id);
     }
 }
 

@@ -1,11 +1,14 @@
 import cluster from 'node:cluster';
-import { cpus } from 'node:os';
 import process from 'node:process';
 import http from 'node:http';
 import url from 'node:url';
+import { cpus } from 'node:os';
 import { createApplication } from './Application';
 import { assertNonNullish } from './asserts';
+import { userRepository } from './components/user/userRepository';
+import { User } from './components/user/userEntity';
 
+// todo revert
 const cpuCount = cpus().length;
 
 // TODO parse from .env
@@ -14,14 +17,15 @@ const cpuCount = cpus().length;
 // todo magic strings - get rid of them
 // todo add test for syntax error
 // todo add test and send just "invalid_data"
+// todo test request with not json body
+// todo make userRepository.create get raw object to not duplicate uuid generation in master process repository
 const startPort = 4000;
 let requestIteration = 0;
 
 if (cluster.isPrimary) {
     console.log(`Primary ${process.pid} is running`);
 
-    // Fork workers.
-    for (let i = 0; i < cpuCount; i += 1) {
+    for (let cpuIndex = 0; cpuIndex < cpuCount; cpuIndex += 1) {
         cluster.fork();
     }
 
@@ -31,11 +35,33 @@ if (cluster.isPrimary) {
         cluster.fork();
     });
 
-    cluster.on('listening', (worker, address) => {
-        console.log(
-            `A worker (ID=${worker.id}) is now connected to ${address.address ?? ''}:${address.port}`,
-        );
-    });
+    for (const id in cluster.workers) {
+        const worker = cluster.workers[id]!;
+
+        worker.on('message', async (msg) => {
+            console.log(`Caught on master. Message from worker #${id}: ${JSON.stringify(msg)}, as raw object: ${msg}`);
+
+            if (msg.cmd === 'findById') {
+                const user = await userRepository.findById(msg.parameters.id);
+
+                worker.send({ cmd: msg.cmd, data: user });
+            } else if (msg.cmd === 'create') {
+                const user = await userRepository.create(User.fromRawObject(msg.parameters.item));
+
+                worker.send({ cmd: msg.cmd, data: user });
+            } else if (msg.cmd === 'findAll') {
+                const users = await userRepository.findAll();
+
+                worker.send({ cmd: msg.cmd, data: users });
+            } else if (msg.cmd === 'delete') {
+                await userRepository.delete(msg.parameters.id);
+
+                worker.send({ cmd: msg.cmd, data: {} });
+            } else {
+                worker.send({ cmd: 'from master' });
+            }
+        });
+    }
 
     http.createServer((balancerRequest, balancerResponse) => {
         requestIteration = requestIteration === cpuCount ? 1 : requestIteration + 1;

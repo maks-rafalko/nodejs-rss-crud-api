@@ -1,12 +1,14 @@
+import cluster from 'node:cluster';
 import { User } from './userEntity';
-import { IDataStorage } from '../../framework/IDataStorage';
-import { InMemoryDatabase } from '../../framework/InMemoryDatabase';
+import { IDataStorage } from '../../framework/data-storage/IDataStorage';
+import { InMemoryDatabase } from '../../framework/data-storage/InMemoryDatabase';
+import { MasterProcessDatabase } from '../../framework/data-storage/MasterProcessDatabase';
 
 class UserRepository {
     private dataStorage: IDataStorage<User>;
 
-    constructor() {
-        this.dataStorage = new InMemoryDatabase<User>();
+    constructor(dataStorage: IDataStorage<User>) {
+        this.dataStorage = dataStorage;
     }
 
     public async findAll(): Promise<User[]> {
@@ -32,6 +34,8 @@ class UserRepository {
     }
 }
 
-const userRepository = new UserRepository();
+const dataStorage = cluster.isWorker ? new MasterProcessDatabase() : new InMemoryDatabase<User>();
+
+const userRepository = new UserRepository(dataStorage);
 
 export { userRepository };
