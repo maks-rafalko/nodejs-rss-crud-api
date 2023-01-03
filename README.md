@@ -1,6 +1,78 @@
 # RS School Assignment: CRUD API
 
-## Description
+## Installation the application
+
+```bash
+git clone git@github.com:maks-rafalko/nodejs-rss-crud-api.git
+
+git checkout feature/crud-api-http-server
+
+npm ci
+```
+
+(!) Make sure to copy `.env.example` to `.env` and update the port value if needed.
+
+## Run the application
+
+There 3 ways to run the application:
+
+1. Run the application in development mode:
+
+   ```bash
+   npm run start:dev
+   ```
+   
+   This command will run the application in development mode with `nodemon` and `ts-node` packages.
+
+2. Run the application in production mode:
+
+   ```bash
+   npm run start:prod
+   ```
+   
+   This command will build the application using `webpack` to the `build/bundle.js` file and run it.
+
+3. Run the application in a multi-node `Cluster` environment:
+
+    ```bash
+    npm run start:multi
+    ```
+    
+    This command will create 1 master process and `N` workers in a cluster, where `N` is the number of logical CPU cores.
+
+    Master node will start on `PUBLISHING_PORT` from `.env` file and workers will start on `PUBLISHING_PORT + %worker_index%` port.
+
+    Workers will use the in-memory database, located in master process.
+
+    Master process load balances requests between workers using `Round Robin` algorithm.
+
+## Test the application
+
+```bash
+npm run test
+```
+
+This command will run the application tests using `jest` package: unit and functional tests will be executed in a single-node environment.
+
+## Lint the application
+
+```bash
+npm run lint
+```
+
+This command will run the application linter using `eslint` package.
+
+```bash
+npm run lint:fix
+```
+
+This command will run the application linter using `eslint` package and fix all fixable issues.
+
+## Postman collection
+
+You can find Postman collection in the `./rss_crud_api_postman_collection.json` file to simplify testing the application.
+
+## Description of the task
 
 Your task is to implement simple CRUD API using in-memory database underneath.
 
