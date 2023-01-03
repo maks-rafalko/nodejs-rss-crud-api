@@ -4,7 +4,6 @@ import { Router } from './framework/Router';
 import { Response } from './framework/Response';
 import { Request } from './framework/Request';
 import { RouteNotMatchedError } from './error/RouteNotMatchedError';
-import { userRouter } from './userRouter';
 import { handleException } from './framework/exceptionHandler';
 
 const resolveBody = async (request: Request): Promise<string> => {
@@ -82,12 +81,4 @@ class Application {
     }
 }
 
-const createApplication = (): Application => {
-    const app = new Application();
-
-    app.addRouter(userRouter);
-
-    return app;
-};
-
-export { createApplication };
+export { Application };

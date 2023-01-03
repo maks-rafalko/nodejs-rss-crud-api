@@ -2,10 +2,10 @@ import supertest from 'supertest';
 import { constants as httpConstants } from 'node:http2';
 import { validate as validateUuid, v4 as uuidv4 } from 'uuid';
 import { CreateUserDto, UpdateUserDto } from '../src/components/user/userDto';
-import { createApplication } from '../src/Application';
 import { userRepository } from '../src/components/user/userRepository';
 import { User } from '../src/components/user/userEntity';
 import { omit } from '../src/utils';
+import { createApplication } from '../src/applicationCreator';
 
 const app = createApplication();
 const request = supertest(app.createServer('http://localhost'));
