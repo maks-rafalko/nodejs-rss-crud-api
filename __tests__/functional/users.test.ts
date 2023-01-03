@@ -1,12 +1,12 @@
 import supertest from 'supertest';
 import { constants as httpConstants } from 'node:http2';
 import { validate as validateUuid, v4 as uuidv4 } from 'uuid';
-import { CreateUserDto, UpdateUserDto } from '../src/components/user/userDto';
-import { userRepository } from '../src/components/user/userRepository';
-import { User } from '../src/components/user/userEntity';
-import { omit } from '../src/utils';
-import { createApplication } from '../src/applicationCreator';
-import {EXCEPTION_MESSAGE_INVALID_JSON} from "../src/framework/exceptionHandler";
+import { CreateUserDto, UpdateUserDto } from '../../src/components/user/userDto';
+import { userRepository } from '../../src/components/user/userRepository';
+import { User } from '../../src/components/user/userEntity';
+import { omit } from '../../src/utils';
+import { createApplication } from '../../src/applicationCreator';
+import { EXCEPTION_MESSAGE_INVALID_JSON } from '../../src/framework/exceptionHandler';
 
 const app = createApplication();
 const request = supertest(app.createServer('http://localhost'));
@@ -165,7 +165,7 @@ describe('Users Model', () => {
             const response = await request.post('/api/users').send('invalid json');
 
             expect(response.status).toBe(httpConstants.HTTP_STATUS_BAD_REQUEST);
-            expect(response.body).toEqual({'message': EXCEPTION_MESSAGE_INVALID_JSON});
+            expect(response.body).toEqual({ message: EXCEPTION_MESSAGE_INVALID_JSON });
         });
     });
 

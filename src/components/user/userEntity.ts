@@ -33,10 +33,12 @@ class User {
         return this.hobbies;
     }
 
-    public updateFromDto(dto: UpdateUserDto): void {
+    public updateFromDto(dto: UpdateUserDto): User {
         this.username = dto.username;
         this.age = dto.age;
         this.hobbies = dto.hobbies;
+
+        return this;
     }
 
     public static fromDto(dto: CreateUserDto): User {

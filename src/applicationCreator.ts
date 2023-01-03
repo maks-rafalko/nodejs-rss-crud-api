@@ -6,8 +6,17 @@ import url from 'node:url';
 import { userRouter } from './userRouter';
 import { Application } from './Application';
 import { userRepository } from './components/user/userRepository';
-import { User } from './components/user/userEntity';
 import { assertNonNullish } from './asserts';
+import * as logger from './framework/logger';
+
+const cpuCount = cpus().length;
+let requestIteration = 0;
+
+const getNextPortByRoundRobin = (startPort: number): number => {
+    requestIteration = requestIteration === cpuCount ? 1 : requestIteration + 1;
+
+    return startPort + requestIteration;
+};
 
 const createApplication = (): Application => {
     const app = new Application();
@@ -17,13 +26,50 @@ const createApplication = (): Application => {
     return app;
 };
 
+const enableMasterDatabaseCommunicationWithWorkers = (): void => {
+    for (const id in cluster.workers) {
+        const worker = cluster.workers[id]!;
+
+        worker.on('message', async (msg) => {
+            // @ts-ignore
+            if (typeof userRepository[msg.method] === 'function') {
+                const parameters = msg.parameters ?? [];
+                // @ts-ignore
+                const result = await userRepository[msg.method](...parameters);
+
+                worker.send({ method: msg.method, data: result });
+            }
+        });
+    }
+};
+
+const createProxyLoadBalancerServer = (startPort: number): void => {
+    http.createServer((balancerRequest, balancerResponse) => {
+        const nextPortForLoadBalanceRequest = getNextPortByRoundRobin(startPort);
+
+        logger.debug(`Proxying request to port ${nextPortForLoadBalanceRequest}`);
+
+        assertNonNullish(balancerRequest.url, 'URL must not be nullish.');
+
+        const options = {
+            ...url.parse(balancerRequest.url),
+            port: nextPortForLoadBalanceRequest,
+            headers: balancerRequest.headers,
+            method: balancerRequest.method,
+        };
+
+        balancerRequest.pipe(
+            http.request(options, (response) => {
+                balancerResponse.writeHead(response.statusCode!, response.headers);
+                response.pipe(balancerResponse);
+            }),
+        );
+    }).listen(startPort);
+};
+
 const createMultiNodeApplication = (startPort: number): void => {
-    const cpuCount = cpus().length;
-
-    let requestIteration = 0;
-
     if (cluster.isPrimary) {
-        console.log(`Primary ${process.pid} is running`);
+        logger.debug(`Primary ${process.pid} is running on port ${startPort}. Waiting for workers to start...`);
 
         for (let cpuIndex = 0; cpuIndex < cpuCount; cpuIndex += 1) {
             cluster.fork();
@@ -33,58 +79,14 @@ const createMultiNodeApplication = (startPort: number): void => {
             cluster.fork();
         });
 
-        for (const id in cluster.workers) {
-            const worker = cluster.workers[id]!;
+        enableMasterDatabaseCommunicationWithWorkers();
 
-            worker.on('message', async (msg) => {
-                console.log(`Caught on master. Message from worker #${id}: ${JSON.stringify(msg)}, as raw object: ${msg}`);
-
-                if (msg.cmd === 'findById') {
-                    const user = await userRepository.findById(msg.parameters.id);
-
-                    worker.send({ cmd: msg.cmd, data: user });
-                } else if (msg.cmd === 'create') {
-                    const user = await userRepository.create(User.fromRawObject(msg.parameters.item));
-
-                    worker.send({ cmd: msg.cmd, data: user });
-                } else if (msg.cmd === 'findAll') {
-                    const users = await userRepository.findAll();
-
-                    worker.send({ cmd: msg.cmd, data: users });
-                } else if (msg.cmd === 'delete') {
-                    await userRepository.delete(msg.parameters.id);
-
-                    worker.send({ cmd: msg.cmd, data: {} });
-                } else {
-                    worker.send({ cmd: 'from master' });
-                }
-            });
-        }
-
-        http.createServer((balancerRequest, balancerResponse) => {
-            requestIteration = requestIteration === cpuCount ? 1 : requestIteration + 1;
-            const nextPortForLoadBalanceRequest = startPort + requestIteration;
-
-            assertNonNullish(balancerRequest.url, 'URL must not be nullish.');
-
-            const options = {
-                ...url.parse(balancerRequest.url),
-                port: nextPortForLoadBalanceRequest,
-                headers: balancerRequest.headers,
-                method: balancerRequest.method,
-            };
-
-            balancerRequest.pipe(
-                http.request(options, (response) => {
-                    balancerResponse.writeHead(response.statusCode!, response.headers);
-                    response.pipe(balancerResponse);
-                }),
-            );
-        }).listen(startPort);
+        createProxyLoadBalancerServer(startPort);
     } else {
-        createApplication().listen(startPort + cluster.worker!.id);
+        const workerPort = startPort + cluster.worker!.id;
+        createApplication().listen(workerPort);
 
-        console.log(`Worker ${process.pid} started`);
+        logger.debug(`Worker ${process.pid} started on port ${workerPort}.`);
     }
 };
 

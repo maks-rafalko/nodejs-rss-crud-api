@@ -22,9 +22,9 @@ const updateUser: HandlerFn = async (request: Request, response: Response): Prom
 
     validateModel<UpdateUserDto>(updatedUserDto, validationRules);
 
-    user.updateFromDto(updatedUserDto);
+    const updatedUser = await userRepository.update(id, updatedUserDto);
 
-    response.json(user, httpConstants.HTTP_STATUS_OK);
+    response.json(updatedUser, httpConstants.HTTP_STATUS_OK);
 };
 
 export { updateUser };

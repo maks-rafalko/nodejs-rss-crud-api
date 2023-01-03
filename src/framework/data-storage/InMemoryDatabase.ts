@@ -11,6 +11,18 @@ class InMemoryDatabase<T> implements IDataStorage<T> {
         this.items.push(item);
     }
 
+    public async update(key: keyof T, value: any, updatedItem: T): Promise<T> {
+        this.items = this.items.map((item: T): T => {
+            if (item[key] === value) {
+                return updatedItem;
+            }
+
+            return item;
+        });
+
+        return updatedItem;
+    }
+
     public async remove(key: keyof T, value: any): Promise<void> {
         this.items = this.items.filter((item: T) => item[key] !== value);
     }
