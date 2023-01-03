@@ -6,7 +6,7 @@
   "scripts": {
     "start:dev": "nodemon",
     "start:prod": "webpack --mode=production --node-env=production && node build/bundle.js",
-    "start:multi": "ts-node src/index.ts --multi-node",
+    "start:multi": "nodemon -- --multi-node",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest"

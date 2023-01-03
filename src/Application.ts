@@ -48,8 +48,6 @@ class Application {
                         const parsedUrl = new URL(url, baseUrl);
                         request.setQueryParameters(parsedUrl.searchParams);
 
-                        // console.log(`Request received: ${method} ${parsedUrl.pathname}`);
-
                         await this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
                     } catch (error) {
                         handleException(error as Error, response);

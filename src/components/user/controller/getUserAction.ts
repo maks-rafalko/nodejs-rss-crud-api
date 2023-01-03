@@ -4,6 +4,7 @@ import { Request } from '../../../framework/Request';
 import { Response } from '../../../framework/Response';
 import { userRepository } from '../userRepository';
 import { assertValidUuid } from '../../../asserts';
+import { USER_NOT_FOUND } from '../exceptionMessages';
 
 const getUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.getPlaceholderValues();
@@ -13,7 +14,7 @@ const getUser: HandlerFn = async (request: Request, response: Response): Promise
     const user = await userRepository.findById(id);
 
     if (!user) {
-        response.json({ message: 'User not found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);
+        response.json({ message: USER_NOT_FOUND }, httpConstants.HTTP_STATUS_NOT_FOUND);
         return;
     }
 

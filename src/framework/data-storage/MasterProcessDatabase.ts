@@ -2,7 +2,6 @@ import process from 'node:process';
 import cluster from 'node:cluster';
 import { IDataStorage } from './IDataStorage';
 import { User } from '../../components/user/userEntity';
-import { UserRepository } from '../../components/user/userRepository';
 
 class MasterProcessDatabase implements IDataStorage<User> {
     public async get(_: keyof User, value: any): Promise<User | undefined> {
@@ -35,7 +34,7 @@ class MasterProcessDatabase implements IDataStorage<User> {
         return this.sendCommandToMasterProcess('findAll');
     }
 
-    private async sendCommandToMasterProcess(method: keyof UserRepository, parameters: any[] = []): Promise<any> {
+    private async sendCommandToMasterProcess(method: string, parameters: any[] = []): Promise<any> {
         return new Promise((resolve, reject) => {
             process.send!({ method, parameters });
 
