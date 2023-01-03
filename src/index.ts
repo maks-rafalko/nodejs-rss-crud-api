@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
-import { assertNonNullish } from './asserts';
+import { assertNonNullish } from './framework/asserts';
 import { NOT_MEANINGFUL_ARG_COUNT, parseCommandLineArguments } from './framework/commandParser';
-import { parseIntRadix10 } from './utils';
-import { createApplication, createMultiNodeApplication } from './applicationCreator';
+import { parseIntRadix10 } from './framework/utils';
+import { createApplication, createMultiNodeApplication } from './framework/applicationCreator';
 
 dotenv.config();
 

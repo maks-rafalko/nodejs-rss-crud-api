@@ -1,8 +1,8 @@
-import { assertNonNullish } from '../asserts';
+import { assertNonNullish } from './asserts';
 import { Response } from './Response';
 import { Request } from './Request';
 import { pathToRegExp } from './pathToRegex';
-import { HttpMethodNotAllowed } from '../error/HttpMethodNotAllowed';
+import { HttpMethodNotAllowed } from './error/HttpMethodNotAllowed';
 
 enum HttpMethod {
     Get = 'GET',

@@ -3,11 +3,11 @@ import cluster from 'node:cluster';
 import process from 'node:process';
 import http from 'node:http';
 import url from 'node:url';
-import { userRouter } from './userRouter';
+import { userRouter } from '../components/user/userRouter';
 import { Application } from './Application';
-import { userRepository } from './components/user/userRepository';
+import { userRepository } from '../components/user/userRepository';
 import { assertNonNullish } from './asserts';
-import * as logger from './framework/logger';
+import * as logger from './logger';
 
 const cpuCount = cpus().length;
 let requestIteration = 0;

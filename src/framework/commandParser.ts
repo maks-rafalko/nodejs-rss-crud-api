@@ -1,4 +1,4 @@
-import { assertNonNullish } from '../asserts';
+import { assertNonNullish } from './asserts';
 
 const NOT_MEANINGFUL_ARG_COUNT = 2;
 

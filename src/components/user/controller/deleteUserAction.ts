@@ -3,7 +3,7 @@ import { HandlerFn } from '../../../framework/Router';
 import { Request } from '../../../framework/Request';
 import { Response } from '../../../framework/Response';
 import { userRepository } from '../userRepository';
-import { assertValidUuid } from '../../../asserts';
+import { assertValidUuid } from '../../../framework/asserts';
 import { USER_NOT_FOUND } from '../exceptionMessages';
 
 const deleteUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {

@@ -1,4 +1,4 @@
-import { PropertyValidationError } from '../framework/validator/PropertyValidationError';
+import { PropertyValidationError } from '../validator/PropertyValidationError';
 
 class ValidationError extends Error {
     private readonly errors: PropertyValidationError[];

@@ -1,4 +1,4 @@
-import { ValidationError } from '../../error/ValidationError';
+import { ValidationError } from '../error/ValidationError';
 import { PropertyValidationError } from './PropertyValidationError';
 
 interface ValidationRule {

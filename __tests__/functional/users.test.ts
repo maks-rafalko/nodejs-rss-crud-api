@@ -4,8 +4,8 @@ import { validate as validateUuid, v4 as uuidv4 } from 'uuid';
 import { CreateUserDto, UpdateUserDto } from '../../src/components/user/userDto';
 import { userRepository } from '../../src/components/user/userRepository';
 import { User } from '../../src/components/user/userEntity';
-import { omit } from '../../src/utils';
-import { createApplication } from '../../src/applicationCreator';
+import { omit } from '../../src/framework/utils';
+import { createApplication } from '../../src/framework/applicationCreator';
 import { EXCEPTION_MESSAGE_INVALID_JSON } from '../../src/framework/exceptionHandler';
 
 const app = createApplication();

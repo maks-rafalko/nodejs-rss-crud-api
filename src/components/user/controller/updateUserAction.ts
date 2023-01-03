@@ -5,7 +5,7 @@ import { HandlerFn } from '../../../framework/Router';
 import { userRepository } from '../userRepository';
 import { validateModel } from '../../../framework/validator';
 import { UpdateUserDto, validationRules } from '../userDto';
-import { assertValidUuid } from '../../../asserts';
+import { assertValidUuid } from '../../../framework/asserts';
 import { USER_NOT_FOUND } from '../exceptionMessages';
 
 const updateUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {

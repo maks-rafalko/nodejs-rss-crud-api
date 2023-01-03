@@ -1,10 +1,10 @@
 import { constants as httpConstants } from 'node:http2';
 import { Response } from './Response';
-import { RouteNotMatchedError } from '../error/RouteNotMatchedError';
-import { ValidationError } from '../error/ValidationError';
+import { RouteNotMatchedError } from './error/RouteNotMatchedError';
+import { ValidationError } from './error/ValidationError';
 import { PropertyValidationError } from './validator/PropertyValidationError';
-import { HttpBadRequestError } from '../error/HttpBadRequestError';
-import { HttpMethodNotAllowed } from '../error/HttpMethodNotAllowed';
+import { HttpBadRequestError } from './error/HttpBadRequestError';
+import { HttpMethodNotAllowed } from './error/HttpMethodNotAllowed';
 
 const EXCEPTION_MESSAGE_NOT_FOUND = 'Not Found.';
 const EXCEPTION_MESSAGE_INVALID_JSON = 'Invalid JSON.';
