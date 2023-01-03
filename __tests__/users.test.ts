@@ -6,6 +6,7 @@ import { userRepository } from '../src/components/user/userRepository';
 import { User } from '../src/components/user/userEntity';
 import { omit } from '../src/utils';
 import { createApplication } from '../src/applicationCreator';
+import {EXCEPTION_MESSAGE_INVALID_JSON} from "../src/framework/exceptionHandler";
 
 const app = createApplication();
 const request = supertest(app.createServer('http://localhost'));
@@ -158,6 +159,13 @@ describe('Users Model', () => {
                     },
                 ],
             });
+        });
+
+        it('returns 400 when request has invalid json', async () => {
+            const response = await request.post('/api/users').send('invalid json');
+
+            expect(response.status).toBe(httpConstants.HTTP_STATUS_BAD_REQUEST);
+            expect(response.body).toEqual({'message': EXCEPTION_MESSAGE_INVALID_JSON});
         });
     });
 

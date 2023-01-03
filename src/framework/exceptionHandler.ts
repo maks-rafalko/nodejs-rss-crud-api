@@ -6,9 +6,13 @@ import { PropertyValidationError } from './validator/PropertyValidationError';
 import { HttpBadRequestError } from '../error/HttpBadRequestError';
 import { HttpMethodNotAllowed } from '../error/HttpMethodNotAllowed';
 
+const EXCEPTION_MESSAGE_NOT_FOUND = 'Not Found.';
+const EXCEPTION_MESSAGE_INVALID_JSON = 'Invalid JSON.';
+const EXCEPTION_MESSAGE_INTERNAL_SERVER_ERROR = 'Internal Server Error.';
+
 function handleException(error: Error, response: Response) {
     if (error instanceof RouteNotMatchedError) {
-        response.json({ message: 'Not Found.' }, httpConstants.HTTP_STATUS_NOT_FOUND);
+        response.json({ message: EXCEPTION_MESSAGE_NOT_FOUND }, httpConstants.HTTP_STATUS_NOT_FOUND);
         return;
     }
 
@@ -33,11 +37,11 @@ function handleException(error: Error, response: Response) {
     }
 
     if (error instanceof SyntaxError) {
-        response.json({ message: 'Invalid JSON.' }, httpConstants.HTTP_STATUS_BAD_REQUEST);
+        response.json({ message: EXCEPTION_MESSAGE_INVALID_JSON }, httpConstants.HTTP_STATUS_BAD_REQUEST);
         return;
     }
 
-    response.json({ message: 'Internal Server Error.' }, httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR);
+    response.json({ message: EXCEPTION_MESSAGE_INTERNAL_SERVER_ERROR }, httpConstants.HTTP_STATUS_INTERNAL_SERVER_ERROR);
 }
 
-export { handleException };
+export { handleException, EXCEPTION_MESSAGE_INVALID_JSON };

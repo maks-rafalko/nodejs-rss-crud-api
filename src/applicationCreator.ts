@@ -20,12 +20,6 @@ const createApplication = (): Application => {
 const createMultiNodeApplication = (startPort: number): void => {
     const cpuCount = cpus().length;
 
-    // todo move users var out from repository
-    // todo magic strings - get rid of them
-    // todo add test for syntax error
-    // todo add test and send just "invalid_data"
-    // todo test request with not json body
-    // todo make userRepository.create get raw object to not duplicate uuid generation in master process repository
     let requestIteration = 0;
 
     if (cluster.isPrimary) {
@@ -78,7 +72,6 @@ const createMultiNodeApplication = (startPort: number): void => {
                 port: nextPortForLoadBalanceRequest,
                 headers: balancerRequest.headers,
                 method: balancerRequest.method,
-                // options.agent = false; todo ???????
             };
 
             balancerRequest.pipe(
