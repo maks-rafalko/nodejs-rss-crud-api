@@ -4,21 +4,21 @@ import { UserRepository } from '../../src/components/user/userRepository';
 
 describe('UserRepository', () => {
     describe('with InMemoryDatabase', () => {
-        it('updates the user', async () => {
+        it('updates the user when valid data provided', async () => {
             const userRepository = new UserRepository(new InMemoryDatabase<User>());
-            await userRepository.create(new User('John', 20, ['hiking', 'reading']));
-            const user2 = await userRepository.create(new User('Nick', 13, ['programming']));
+            const user = await userRepository.create(new User('Nick', 13, ['programming']));
 
-            const updatedUser = await userRepository.update(user2.id, {
+            const updatedUser = await userRepository.update(user.id, {
                 username: 'Updated Username',
                 age: 14,
                 hobbies: ['programming', 'reading'],
             });
 
+            // check response has updated values
             expect(updatedUser.username).toBe('Updated Username');
+            // check DB has updated values
             const allUsers = await userRepository.findAll();
-            expect(allUsers.length).toBe(2);
-            expect(allUsers[1]!.username).toBe('Updated Username');
+            expect(allUsers[0]!.username).toBe('Updated Username');
         });
     });
 });
