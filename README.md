@@ -22,7 +22,9 @@ There 3 ways to run the application:
    npm run start:dev
    ```
    
-   This command will run the application in development mode with `nodemon` and `ts-node` packages.
+   This command will run the application in development mode with `nodemon` and `ts-node` packages on a port from `.env`.
+
+   By default, it will run on `http://localhost:4000`.
 
 2. Run the application in production mode:
 
@@ -31,6 +33,8 @@ There 3 ways to run the application:
    ```
    
    This command will build the application using `webpack` to the `build/bundle.js` file and run it.
+
+   By default, it will run on `http://localhost:4000`.
 
 3. Run the application in a multi-node `Cluster` environment:
 
@@ -45,6 +49,8 @@ There 3 ways to run the application:
     Workers will use the in-memory database, located in master process.
 
     Master process load balances requests between workers using `Round Robin` algorithm.
+
+    By default, load balancer will run on `http://localhost:4000`.
 
 ## Test the application
 
@@ -71,6 +77,8 @@ This command will run the application linter using `eslint` package and fix all 
 ## Postman collection
 
 You can find Postman collection in the `./rss_crud_api_postman_collection.json` file to simplify testing the application.
+
+---
 
 ## Description of the task
 
