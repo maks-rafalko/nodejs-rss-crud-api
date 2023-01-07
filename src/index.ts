@@ -2,20 +2,21 @@ import * as dotenv from 'dotenv';
 import { assertNonNullish } from './framework/asserts';
 import { NOT_MEANINGFUL_ARG_COUNT, parseCommandLineArguments } from './framework/commandParser';
 import { parseIntRadix10 } from './framework/utils';
-import { createApplication, createMultiNodeApplication } from './framework/applicationCreator';
+import { listenMultiNodeApplication } from './framework/multiNodeApplicationCreator';
+import { listenSingleNodeApplication } from './framework/singleNodeApplicationCreator';
 
 dotenv.config();
 
 const meaningfulArgs = process.argv.slice(NOT_MEANINGFUL_ARG_COUNT);
 const optionsWithValues = parseCommandLineArguments(meaningfulArgs);
-const isMultiNode = optionsWithValues.options['--multi-node'] ?? false;
+const isMultiNodeMode = optionsWithValues.options['--multi-node'] ?? false;
 
 assertNonNullish(process.env['API_PORT'], 'Port must be a number.');
 
 const port = parseIntRadix10(process.env['API_PORT']);
 
-if (isMultiNode) {
-    createMultiNodeApplication(port);
+if (isMultiNodeMode) {
+    listenMultiNodeApplication(port);
 } else {
-    createApplication().listen(port);
+    listenSingleNodeApplication(port);
 }

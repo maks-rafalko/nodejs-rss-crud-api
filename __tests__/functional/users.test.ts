@@ -5,10 +5,10 @@ import { CreateUserDto, UpdateUserDto } from '../../src/components/user/userDto'
 import { userRepository } from '../../src/components/user/userRepository';
 import { User } from '../../src/components/user/userEntity';
 import { omit } from '../../src/framework/utils';
-import { createApplication } from '../../src/framework/applicationCreator';
 import { EXCEPTION_MESSAGE_INVALID_JSON } from '../../src/framework/exceptionHandler';
+import { createSingleNodeApplication } from '../../src/framework/singleNodeApplicationCreator';
 
-const app = createApplication();
+const app = createSingleNodeApplication();
 const request = supertest(app.createServer('http://localhost'));
 
 beforeEach(() => {

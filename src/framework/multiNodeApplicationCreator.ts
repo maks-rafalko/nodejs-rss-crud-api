@@ -3,11 +3,10 @@ import cluster from 'node:cluster';
 import process from 'node:process';
 import http from 'node:http';
 import url from 'node:url';
-import { userRouter } from '../components/user/userRouter';
-import { Application } from './Application';
 import { userRepository } from '../components/user/userRepository';
 import { assertNonNullish } from './asserts';
 import * as logger from './logger';
+import { listenSingleNodeApplication } from './singleNodeApplicationCreator';
 
 const cpuCount = cpus().length;
 let requestIteration = 0;
@@ -16,14 +15,6 @@ const getNextPortByRoundRobin = (startPort: number): number => {
     requestIteration = requestIteration === cpuCount ? 1 : requestIteration + 1;
 
     return startPort + requestIteration;
-};
-
-const createApplication = (): Application => {
-    const app = new Application();
-
-    app.addRouter(userRouter);
-
-    return app;
 };
 
 const enableMasterDatabaseCommunicationWithWorkers = (): void => {
@@ -67,7 +58,7 @@ const createProxyLoadBalancerServer = (startPort: number): void => {
     }).listen(startPort);
 };
 
-const createMultiNodeApplication = (startPort: number): void => {
+const listenMultiNodeApplication = (startPort: number): void => {
     if (cluster.isPrimary) {
         logger.debug(`Primary ${process.pid} is running on port ${startPort}. Waiting for workers to start...`);
 
@@ -84,10 +75,10 @@ const createMultiNodeApplication = (startPort: number): void => {
         createProxyLoadBalancerServer(startPort);
     } else {
         const workerPort = startPort + cluster.worker!.id;
-        createApplication().listen(workerPort);
+        listenSingleNodeApplication(workerPort);
 
         logger.debug(`Worker ${process.pid} started on port ${workerPort}.`);
     }
 };
 
-export { createApplication, createMultiNodeApplication };
+export { listenMultiNodeApplication };
