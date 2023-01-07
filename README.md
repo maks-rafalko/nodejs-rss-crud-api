@@ -1,6 +1,6 @@
 # RS School Assignment: CRUD API
 
-## Installation the application
+## Install the application
 
 ```bash
 git clone git@github.com:maks-rafalko/nodejs-rss-crud-api.git
@@ -40,7 +40,7 @@ There 3 ways to run the application:
     
     This command will create 1 master process and `N` workers in a cluster, where `N` is the number of logical CPU cores.
 
-    Master node will start on `PUBLISHING_PORT` from `.env` file and workers will start on `PUBLISHING_PORT + %worker_index%` port.
+    Master node will start on `API_PORT` from `.env` file and workers will start on `API_PORT + %worker_index%` port.
 
     Workers will use the in-memory database, located in master process.
 
