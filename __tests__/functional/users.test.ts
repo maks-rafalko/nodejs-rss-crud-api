@@ -4,9 +4,9 @@ import { validate as validateUuid, v4 as uuidv4 } from 'uuid';
 import { CreateUserDto, UpdateUserDto } from '../../src/components/user/userDto';
 import { userRepository } from '../../src/components/user/userRepository';
 import { User } from '../../src/components/user/userEntity';
-import { omit } from '../../src/framework/utils';
 import { EXCEPTION_MESSAGE_INVALID_JSON } from '../../src/framework/exceptionHandler';
 import { createSingleNodeApplication } from '../../src/framework/singleNodeApplicationCreator';
+import { omit } from '../../src/framework/extended-functions-api/omit';
 
 const app = createSingleNodeApplication();
 const request = supertest(app.createServer('http://localhost'));

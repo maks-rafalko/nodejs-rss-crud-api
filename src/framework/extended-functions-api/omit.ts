@@ -5,8 +5,4 @@ const omit = <T extends object>(obj: T, key: keyof T): Omit<T, keyof T> => {
     return rest;
 };
 
-const RADIX = 10;
-
-const parseIntRadix10 = (value: string): number => parseInt(value, RADIX);
-
-export { omit, parseIntRadix10 };
+export { omit };
