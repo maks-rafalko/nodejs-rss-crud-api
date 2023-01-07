@@ -62,4 +62,11 @@ const parseCommandLineArguments = (meaningfulArguments: string[]) => {
     return parsedCommandLine;
 };
 
-export { parseCommandLineArguments, NOT_MEANINGFUL_ARG_COUNT };
+const getOptionValueFromArgv = (optionName: string): string | boolean | undefined => {
+    const meaningfulArgs = process.argv.slice(NOT_MEANINGFUL_ARG_COUNT);
+    const optionsWithValues = parseCommandLineArguments(meaningfulArgs);
+
+    return optionsWithValues.options[optionName];
+};
+
+export { getOptionValueFromArgv };
