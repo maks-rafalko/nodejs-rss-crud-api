@@ -1,23 +1,14 @@
-import { assertNonNullish } from './asserts';
-import { Response } from './Response';
-import { Request } from './Request';
-import { pathToRegExp } from './pathToRegex';
-import { HttpMethodNotAllowed } from './error/HttpMethodNotAllowed';
+import { assertNonNullish } from '../asserts';
+import { pathToRegExp } from '../pathToRegex';
+import { HttpMethodNotAllowed } from '../error/HttpMethodNotAllowed';
+import { HttpMethod } from './HttpMethodEnum';
+import { ActionHandler } from './ActionHandler';
 
-enum HttpMethod {
-    Get = 'GET',
-    Post = 'POST',
-    Put = 'PUT',
-    Delete = 'DELETE',
-}
-
-type HandlerFn = (request: Request, response: Response) => void;
-
-type Endpoint = Record<string, HandlerFn>;
+type Endpoint = Record<Partial<HttpMethod>, ActionHandler>;
 
 type Endpoints = Record<string, Endpoint>;
 
-type MatchedRouteResult = { handler: HandlerFn, placeholderValues: Record<string, string> | undefined } | null;
+type MatchedRouteResult = { handler: ActionHandler, placeholderValues: Record<string, string> | undefined } | null;
 
 class Router {
     private readonly endpoints: Endpoints = {};
@@ -26,19 +17,19 @@ class Router {
         this.endpoints = {};
     }
 
-    public get(path: string, handler: HandlerFn) {
+    public get(path: string, handler: ActionHandler) {
         this.request(HttpMethod.Get, path, handler);
     }
 
-    public post(path: string, handler: HandlerFn) {
+    public post(path: string, handler: ActionHandler) {
         this.request(HttpMethod.Post, path, handler);
     }
 
-    public delete(path: string, handler: HandlerFn) {
+    public delete(path: string, handler: ActionHandler) {
         this.request(HttpMethod.Delete, path, handler);
     }
 
-    public put(path: string, handler: HandlerFn) {
+    public put(path: string, handler: ActionHandler) {
         this.request(HttpMethod.Put, path, handler);
     }
 
@@ -46,7 +37,7 @@ class Router {
         return this.endpoints;
     }
 
-    public matchPath(method: string, path: string): MatchedRouteResult {
+    public matchPath(method: HttpMethod, path: string): MatchedRouteResult {
         const pathToMatch = path.replace(/\/$/, '');
         const endpoints = this.getEndpoints();
         const regexMatchesPaths = Object.keys(endpoints);
@@ -77,11 +68,11 @@ class Router {
         return null;
     }
 
-    private request(method: string, path: string, handler: HandlerFn) {
+    private request(method: HttpMethod, path: string, handler: ActionHandler) {
         const regExp = pathToRegExp(path);
 
         if (!this.endpoints[regExp]) {
-            this.endpoints[regExp] = {};
+            this.endpoints[regExp] = {} as Endpoint;
         }
 
         const endpoint = this.endpoints[regExp];
@@ -96,4 +87,4 @@ class Router {
     }
 }
 
-export { Router, HandlerFn };
+export { Router, ActionHandler };

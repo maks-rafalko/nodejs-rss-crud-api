@@ -1,5 +1,5 @@
 import { constants as httpConstants } from 'node:http2';
-import { Response } from './Response';
+import { Response } from './http/Response';
 import { RouteNotMatchedError } from './error/RouteNotMatchedError';
 import { ValidationError } from './error/ValidationError';
 import { PropertyValidationError } from './validator/PropertyValidationError';

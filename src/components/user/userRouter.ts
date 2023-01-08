@@ -1,4 +1,4 @@
-import { Router } from '../../framework/Router';
+import { Router } from '../../framework/http/Router';
 import { getUsers } from './controller/getUsersAction';
 import { createUser } from './controller/createUserAction';
 import { deleteUser } from './controller/deleteUserAction';

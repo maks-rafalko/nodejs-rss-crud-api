@@ -1,14 +1,14 @@
 import { constants as httpConstants } from 'node:http2';
-import { Request } from '../../../framework/Request';
-import { Response } from '../../../framework/Response';
-import { HandlerFn } from '../../../framework/Router';
+import { Request } from '../../../framework/http/Request';
+import { Response } from '../../../framework/http/Response';
+import { ActionHandler } from '../../../framework/http/Router';
 import { userRepository } from '../userRepository';
 import { validateModel } from '../../../framework/validator';
 import { UpdateUserDto, validationRules } from '../userDto';
 import { assertValidUuid } from '../../../framework/asserts';
 import { USER_NOT_FOUND } from '../exceptionMessages';
 
-const updateUser: HandlerFn = async (request: Request, response: Response): Promise<void> => {
+const updateUser: ActionHandler = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.getPlaceholderValues();
 
     assertValidUuid(id);

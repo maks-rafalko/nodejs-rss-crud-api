@@ -1,10 +1,11 @@
 import http from 'node:http';
 import { assertNonNullish } from './asserts';
-import { Router } from './Router';
-import { Response } from './Response';
-import { Request } from './Request';
+import { Router } from './http/Router';
+import { Response } from './http/Response';
+import { Request } from './http/Request';
 import { RouteNotMatchedError } from './error/RouteNotMatchedError';
 import { handleException } from './exceptionHandler';
+import { HttpMethod } from './http/HttpMethodEnum';
 
 const resolveBody = async (request: Request): Promise<string> => {
     const bodyChunks: Uint8Array[] = [];
@@ -48,7 +49,7 @@ class Application {
                         const parsedUrl = new URL(url, baseUrl);
                         request.setQueryParameters(parsedUrl.searchParams);
 
-                        await this.executeMatchedHandler(request, response, method, parsedUrl.pathname);
+                        await this.executeMatchedHandler(request, response, method as HttpMethod, parsedUrl.pathname);
                     } catch (error) {
                         handleException(error as Error, response);
                     }
@@ -56,7 +57,7 @@ class Application {
             );
     }
 
-    private async executeMatchedHandler(request: Request, response: Response, method: string, path: string): Promise<void> {
+    private async executeMatchedHandler(request: Request, response: Response, method: HttpMethod, path: string): Promise<void> {
         for (const router of this.routers) {
             const matchedUrl = router.matchPath(method, path);
 
