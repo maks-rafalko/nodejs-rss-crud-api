@@ -24,7 +24,7 @@ There 3 ways to run the application:
    
    This command will run the application in development mode with `nodemon` and `ts-node` packages on a port from `.env`.
 
-   By default, it will run on `http://localhost:4000`.
+   By default, it will run on `http://localhost:4000/api/users`.
 
 2. Run the application in production mode:
 
@@ -34,7 +34,7 @@ There 3 ways to run the application:
    
    This command will build the application using `webpack` to the `build/bundle.js` file and run it.
 
-   By default, it will run on `http://localhost:4000`.
+   By default, it will run on `http://localhost:4000/api/users`.
 
 3. Run the application in a multi-node `Cluster` environment:
 
@@ -50,7 +50,7 @@ There 3 ways to run the application:
 
     Master process load balances requests between workers using `Round Robin` algorithm.
 
-    By default, load balancer will run on `http://localhost:4000`.
+    By default, load balancer will run on `http://localhost:4000/api/users`.
 
 ## Test the application
 
