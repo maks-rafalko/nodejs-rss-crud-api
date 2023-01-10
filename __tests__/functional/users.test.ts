@@ -178,8 +178,8 @@ describe('Users Model', () => {
         });
 
         it('returns existing users from the database', async () => {
-            userRepository.create(new User('John', 20, ['hiking', 'reading']));
-            userRepository.create(new User('Nick', 13, ['programming']));
+            await userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            await userRepository.create(new User('Nick', 13, ['programming']));
 
             const response = await request.get('/api/users');
 
@@ -188,8 +188,8 @@ describe('Users Model', () => {
         });
 
         it('returns existing users with search query', async () => {
-            userRepository.create(new User('John', 20, ['hiking', 'reading']));
-            userRepository.create(new User('Nick', 13, ['programming']));
+            await userRepository.create(new User('John', 20, ['hiking', 'reading']));
+            await userRepository.create(new User('Nick', 13, ['programming']));
 
             const response = await request.get('/api/users?search=John');
 

@@ -8,10 +8,10 @@ class MasterProcessDatabase implements IDataStorage<User> {
         const rawUserObject = await this.sendCommandToMasterProcess('findById', [value]);
 
         if (!rawUserObject) {
-            return Promise.resolve(undefined);
+            return await Promise.resolve(undefined);
         }
 
-        return Promise.resolve(User.fromRawObject(rawUserObject));
+        return await Promise.resolve(User.fromRawObject(rawUserObject));
     }
 
     public async add(item: User): Promise<void> {
@@ -19,7 +19,7 @@ class MasterProcessDatabase implements IDataStorage<User> {
     }
 
     public async update(_: keyof User, value: any, item: User): Promise<User> {
-        return this.sendCommandToMasterProcess('update', [value, item]);
+        return await this.sendCommandToMasterProcess('update', [value, item]);
     }
 
     public async remove(_: keyof User, value: any): Promise<void> {
@@ -27,15 +27,15 @@ class MasterProcessDatabase implements IDataStorage<User> {
     }
 
     public async clear(): Promise<void> {
-        return this.sendCommandToMasterProcess('clearAll');
+        return await this.sendCommandToMasterProcess('clearAll');
     }
 
     public async getAll(): Promise<User[]> {
-        return this.sendCommandToMasterProcess('findAll');
+        return await this.sendCommandToMasterProcess('findAll');
     }
 
     private async sendCommandToMasterProcess(method: string, parameters: any[] = []): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             process.send!({ method, parameters });
 
             cluster.worker!.once('message', (msg) => {

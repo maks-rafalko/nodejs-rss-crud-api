@@ -13,15 +13,17 @@ class UserRepository {
     }
 
     public async findAll(): Promise<User[]> {
-        return this.dataStorage.getAll();
+        return await this.dataStorage.getAll();
     }
 
     public async findById(id: string): Promise<User | undefined> {
-        return this.dataStorage.get('id', id);
+        return await this.dataStorage.get('id', id);
     }
 
     public async create(user: User | Record<keyof User, any>): Promise<User> {
-        const userEntity = user instanceof User ? user : User.fromRawObject(user);
+        const userEntity = user instanceof User
+            ? user
+            : User.fromRawObject(user);
 
         await this.dataStorage.add(userEntity);
 
@@ -29,7 +31,7 @@ class UserRepository {
     }
 
     public async update(id: string, userDto: UpdateUserDto): Promise<User> {
-        return this.dataStorage.update('id', id, new User(userDto.username, userDto.age, userDto.hobbies, id));
+        return await this.dataStorage.update('id', id, new User(userDto.username, userDto.age, userDto.hobbies, id));
     }
 
     public async delete(id: string): Promise<void> {
