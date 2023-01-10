@@ -18,6 +18,138 @@ beforeEach(() => {
 });
 
 describe('Users Model', () => {
+    describe('Multi-step scenarios', () => {
+        it('Scenario 1: create, update, get, delete a user', async () => {
+            // action
+            const response1 = await request.get('/api/users');
+
+            expect(response1.body).toHaveLength(0);
+
+            // action
+            const createUserDto: CreateUserDto = {
+                username: 'John',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+
+            const response2 = await request.post('/api/users').send(createUserDto);
+
+            expect(response2.status).toBe(httpConstants.HTTP_STATUS_CREATED);
+            const createdUserId = response2.body.id;
+
+            // action
+            const response3 = await request.get(`/api/users/${createdUserId}`);
+            expect(response3.body.username).toBe('John');
+
+            // action
+            const updateUserDto: UpdateUserDto = {
+                username: 'John Doe',
+                age: 13,
+                hobbies: ['programming'],
+            };
+
+            const response4 = await request.put(`/api/users/${createdUserId}`).send(updateUserDto);
+
+            expect(response4.body).toEqual({
+                id: createdUserId,
+                username: 'John Doe',
+                age: 13,
+                hobbies: ['programming'],
+            });
+
+            // action
+            await request.delete(`/api/users/${createdUserId}`);
+
+            // action
+            const response5 = await request.get(`/api/users/${createdUserId}`);
+            expect(response5.status).toBe(httpConstants.HTTP_STATUS_NOT_FOUND);
+        });
+
+        it('Scenario 2: id of removed users are not reused', async () => {
+            // action
+            const createUserDto1: CreateUserDto = {
+                username: 'John 1',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+
+            const response1 = await request.post('/api/users').send(createUserDto1);
+            const createdUser1Id = response1.body.id;
+
+            // action
+            const createUserDto2: CreateUserDto = {
+                username: 'John 2',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+
+            const response2 = await request.post('/api/users').send(createUserDto2);
+            const createdUser2Id = response2.body.id;
+
+            // action
+            await request.delete(`/api/users/${createdUser1Id}`);
+            await request.delete(`/api/users/${createdUser1Id}`);
+
+            // action
+            const createUserDto3: CreateUserDto = {
+                username: 'John 3',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+
+            const response3 = await request.post('/api/users').send(createUserDto3);
+            const createdUser3Id = response3.body.id;
+
+            expect(createdUser3Id).not.toBe(createdUser1Id);
+            expect(createdUser3Id).not.toBe(createdUser2Id);
+        });
+
+        it('Scenario 3: updating deleted user leads to 404', async () => {
+            // action
+            const createUserDto1: CreateUserDto = {
+                username: 'John 1',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+
+            const response1 = await request.post('/api/users').send(createUserDto1);
+            const createdUserId = response1.body.id;
+
+            // action
+            await request.delete(`/api/users/${createdUserId}`);
+
+            // action
+            const updateUserDto: UpdateUserDto = {
+                username: 'John 1 Edited',
+                age: 13,
+                hobbies: ['programming'],
+            };
+
+            const response2 = await request.put(`/api/users/${createdUserId}`).send(updateUserDto);
+
+            expect(response2.status).toBe(httpConstants.HTTP_STATUS_NOT_FOUND);
+        });
+
+        it('Scenario 4: incorrect usage of HTTP verbs is not allowed', async () => {
+            // action - trying to create user
+            const createUserDto1: CreateUserDto = {
+                username: 'John 1',
+                age: 20,
+                hobbies: ['hiking', 'reading'],
+            };
+            const response1 = await request.post('/api/users/123').send(createUserDto1);
+            expect(response1.status).toBe(httpConstants.HTTP_STATUS_METHOD_NOT_ALLOWED);
+
+            // action - trying to update a user
+            const response2 = await request.put('/api/users').send(createUserDto1);
+            expect(response2.status).toBe(httpConstants.HTTP_STATUS_METHOD_NOT_ALLOWED);
+
+            // action - trying to delete a user
+            const response3 = await request.delete('/api/users');
+            expect(response3.status).toBe(httpConstants.HTTP_STATUS_METHOD_NOT_ALLOWED);
+        });
+    });
+
     describe('POST /users', () => {
         it('creates a new user', async () => {
             const createUserDto: CreateUserDto = {
