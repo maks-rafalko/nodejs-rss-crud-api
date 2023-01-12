@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "ca39688a-cbd9-4821-8b92-12f0b3e030dc",
+		"name": "RSS CRUD API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"Maks 33\",\n    \"age\": 54,\n    \"hobbies\": [\"r\", \"asdfcvcvcvcv\", \"2\"]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/users/cc0a5ecb-0ecb-45bd-a6e9-11c4ab495d09",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users",
+						"cc0a5ecb-0ecb-45bd-a6e9-11c4ab495d09"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users/:id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"Test\",\n    \"age\": 20,\n    \"hobbies\": [\"asdf\", \"2\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/users/5db804a4-238f-41f8-9d33-50d01b85c33a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users",
+						"5db804a4-238f-41f8-9d33-50d01b85c33a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/users/1eb8ab30-fa93-42c0-a7d4-e7813fb669fb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users",
+						"1eb8ab30-fa93-42c0-a7d4-e7813fb669fb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/404",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/not-found",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"not-found"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/users?some=123&other=mju",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/users?some=123&other=mju",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "some",
+							"value": "123"
+						},
+						{
+							"key": "other",
+							"value": "mju"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
